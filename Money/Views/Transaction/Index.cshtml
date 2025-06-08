@@ -1,0 +1,50 @@
+﻿@model List<Money.Models.Transaction>
+
+@{
+    ViewData["Title"] = "金錢紀錄";
+}
+
+<h2>新增記錄</h2>
+<form asp-action="Add" method="post">
+    <input type="text" name="name" placeholder="商品名稱" required />
+    <input type="number" name="amount" step="0.01" placeholder="價錢" required />
+    <button type="submit">新增</button>
+</form>
+
+<h3>目前紀錄</h3>
+<table border="1">
+    <tr>
+        <th>商品名稱</th>
+        <th>價錢</th>
+        <th>A 確認</th>
+        <th>B 確認</th>
+        <th>動作</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.ProductName</td>
+            <td>@item.Amount</td>
+            <td>@(item.ConfirmedByA ? "✅" : "❌")</td>
+            <td>@(item.ConfirmedByB ? "✅" : "❌")</td>
+            <td>
+                @if (!item.ConfirmedByA)
+                {
+                    <form method="post" asp-action="Confirm">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="hidden" name="who" value="A" />
+                        <button type="submit">A 確認</button>
+                    </form>
+                }
+                @if (!item.ConfirmedByB)
+                {
+                    <form method="post" asp-action="Confirm">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="hidden" name="who" value="B" />
+                        <button type="submit">B 確認</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+</table>
